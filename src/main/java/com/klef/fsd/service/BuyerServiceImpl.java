@@ -47,7 +47,7 @@ public class BuyerServiceImpl implements BuyerService {
 
 	    EmailDetails mail = new EmailDetails();
 	    mail.setRecipient(email);
-	    mail.setSubject("🔐 Reset Your Password - LL-Cart");
+	    mail.setSubject("🔐 Reset Your Password  LL-Cart");
 
 	    String htmlContent = "<h3>Hello from <span style='color:#2563EB;'>LL-Cart</span> 👋</h3>"
 	        + "<p>We received a request to reset your password.</p>"
