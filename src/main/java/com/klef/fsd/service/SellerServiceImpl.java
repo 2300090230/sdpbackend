@@ -134,7 +134,7 @@ public class SellerServiceImpl implements SellerService {
 		seller.setResetToken(resetToken);
 		sellerRepository.save(seller);
 
-		String resetLink = "https://sdpfrontend-rr9e.onrender.com/sreset-password?token=" + resetToken;
+		String resetLink = "https://llcart.vercel.app/sreset-password?token=" + resetToken;
 
 		EmailDetails mail = new EmailDetails();
 		mail.setRecipient(email);
