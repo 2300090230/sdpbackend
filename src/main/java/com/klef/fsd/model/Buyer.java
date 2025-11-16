@@ -1,38 +1,26 @@
 package com.klef.fsd.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "buyer_table")
-
+@Document(collection = "buyers")
 public class Buyer {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "buyer_id")
-	private int id;
-	@Column(name = "buyer_name", length = 50, nullable = false)
+	private String id;
 	private String name;
-	@Column(name = "buyer_email", length = 30, nullable = false, unique = true)
+	@Indexed(unique = true)
 	private String email;
-	@Column(name = "buyer_pwd", length = 20, nullable = false)
 	private String password;
-	@Column(name = "buyer_mobileno", length = 20, nullable = false)
+	@Indexed(unique = true)
 	private String mobileno;
-	@Column(name = "reset_token", length = 255, nullable = true)
 	private String resetToken = null;
-	
-	
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

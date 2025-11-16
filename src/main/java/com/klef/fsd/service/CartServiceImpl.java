@@ -3,7 +3,6 @@ package com.klef.fsd.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +63,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartDTO> getCartItemsByBuyerId(int buyerId) {
+    public List<CartDTO> getCartItemsByBuyerId(String buyerId) {
         Optional<Buyer> buyerOpt = buyerRepository.findById(buyerId);
         if (!buyerOpt.isPresent()) {
             return null;
@@ -84,7 +83,13 @@ public class CartServiceImpl implements CartService {
             pdto.setCategory(cart.getProduct().getCategory());
             pdto.setDescription(cart.getProduct().getDescription());
             pdto.setCost(cart.getProduct().getCost());
-            pdto.setSeller_id(cart.getProduct().getSeller() != null ? cart.getProduct().getSeller().getId() : 0);
+            // Add imageUrl with fallback
+            String imageUrl = cart.getProduct().getImageUrl();
+            if (imageUrl == null || imageUrl.trim().isEmpty()) {
+                imageUrl = "https://placehold.co/300x200?text=No+Image";
+            }
+            pdto.setImageUrl(imageUrl);
+            pdto.setSeller_id(cart.getProduct().getSeller() != null ? cart.getProduct().getSeller().getId() : null);
 
             cartDTO.setProduct(pdto);
             cartDTOs.add(cartDTO);
@@ -94,7 +99,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeCartItem(int cartId) {
+    public void removeCartItem(String cartId) {
         Optional<Cart> cartOpt = cartRepository.findById(cartId);
         if (!cartOpt.isPresent()) {
             throw new IllegalArgumentException("Cart item does not exist");
@@ -103,7 +108,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void clearCartByBuyerId(int buyerId) {
+    public void clearCartByBuyerId(String buyerId) {
         Optional<Buyer> buyerOpt = buyerRepository.findById(buyerId);
         if (!buyerOpt.isPresent()) {
             throw new IllegalArgumentException("Buyer does not exist");
@@ -112,7 +117,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart updateCartQuantity(int buyerId, int productId, int quantity) {
+    public Cart updateCartQuantity(String buyerId, String productId, int quantity) {
         if (quantity < 1 || quantity > 10) {
             throw new IllegalArgumentException("Quantity must be between 1 and 10");
         }
@@ -137,7 +142,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int getCartCountByBuyerId(int buyerId) {
+    public long getCartCountByBuyerId(String buyerId) {
         Optional<Buyer> buyerOpt = buyerRepository.findById(buyerId);
         if (!buyerOpt.isPresent()) {
             throw new IllegalArgumentException("Buyer does not exist");

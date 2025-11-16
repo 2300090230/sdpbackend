@@ -3,11 +3,13 @@ package com.klef.fsd.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import com.klef.fsd.model.Seller;
 
-public interface SellerRepository extends JpaRepository<Seller, Integer> {
+@Repository
+public interface SellerRepository extends MongoRepository<Seller, String> {
     Seller findByUsernameAndPassword(String username, String password);
     List<Seller> findByStatus(String status);
     

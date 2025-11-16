@@ -26,17 +26,17 @@ public class AddressController {
     private AddressService addressService;
 
     @PostMapping("/add/{buyerId}")
-    public Address addAddress(@RequestBody Address address, @PathVariable int  buyerId) {
+    public Address addAddress(@RequestBody Address address, @PathVariable String buyerId) {
         return addressService.addAddress(address, buyerId);
     }
 
     @GetMapping("/buyer/{buyerId}")
-    public List<Address> getBuyerAddresses(@PathVariable int  buyerId) {
+    public List<Address> getBuyerAddresses(@PathVariable String buyerId) {
         return addressService.getAddressesByBuyer(buyerId);
     }
     
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteAddress(@PathVariable int id) {
+    public ResponseEntity<String> deleteAddress(@PathVariable String id) {
         try {
             addressService.deleteAddress(id);
             return ResponseEntity.ok("Address deleted successfully");

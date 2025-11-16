@@ -69,18 +69,25 @@ public class PaymentController {
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         try {
-            Integer buyerId = parseId(request.get("buyerId"), "Buyer ID");
-            Integer addressId = parseId(request.get("addressId"), "Address ID");
+            String buyerId = (String) request.get("buyerId");
+            String addressId = (String) request.get("addressId");
+            
+            if (buyerId == null || buyerId.isEmpty()) {
+                throw new IllegalArgumentException("Buyer ID is required");
+            }
+            if (addressId == null || addressId.isEmpty()) {
+                throw new IllegalArgumentException("Address ID is required");
+            }
 
             logger.info("Creating order for buyerId={}, addressId={}", buyerId, addressId);
 
             // Validate buyer existence
-            Buyer buyer = buyerRepository.findById(buyerId)
+            buyerRepository.findById(buyerId)
                     .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + buyerId));
             logger.info("Buyer validated: ID={}", buyerId);
 
             // Validate address existence
-            Address address = addressRepository.findById(addressId)
+            addressRepository.findById(addressId)
                     .orElseThrow(() -> new IllegalArgumentException("Address not found with ID: " + addressId));
             logger.info("Address validated: ID={}", addressId);
 
@@ -95,7 +102,7 @@ public class PaymentController {
 
             // Validate cart items
             for (com.klef.fsd.dto.CartDTO cartItem : cartItems) {
-                if (cartItem == null || cartItem.getProduct() == null || cartItem.getProduct().getId() == 0) {
+                if (cartItem == null || cartItem.getProduct() == null || cartItem.getProduct().getId() == null || cartItem.getProduct().getId().isEmpty()) {
                     throw new IllegalStateException("Invalid cart item: Product is missing or invalid");
                 }
             }
@@ -169,13 +176,20 @@ public class PaymentController {
             String razorpayOrderId = (String) paymentData.get("razorpay_order_id");
             String paymentId = (String) paymentData.get("razorpay_payment_id");
             String signature = (String) paymentData.get("razorpay_signature");
-            Integer buyerId = parseId(paymentData.get("buyerId"), "Buyer ID");
-            Integer addressId = parseId(paymentData.get("addressId"), "Address ID");
+            String buyerId = (String) paymentData.get("buyerId");
+            String addressId = (String) paymentData.get("addressId");
 
             if (razorpayOrderId == null || paymentId == null || signature == null) {
                 response.put("success", false);
                 response.put("message", "Missing required payment details: razorpay_order_id, razorpay_payment_id, and razorpay_signature are required");
                 return ResponseEntity.badRequest().body(response);
+            }
+            
+            if (buyerId == null || buyerId.isEmpty()) {
+                throw new IllegalArgumentException("Buyer ID is required");
+            }
+            if (addressId == null || addressId.isEmpty()) {
+                throw new IllegalArgumentException("Address ID is required");
             }
 
             logger.info("Verifying payment: orderId={}, paymentId={}, buyerId={}, addressId={}", razorpayOrderId, paymentId, buyerId, addressId);
@@ -218,7 +232,7 @@ public class PaymentController {
 
             // Validate cart items
             for (com.klef.fsd.dto.CartDTO cartItem : cartItems) {
-                if (cartItem == null || cartItem.getProduct() == null || cartItem.getProduct().getId() == 0) {
+                if (cartItem == null || cartItem.getProduct() == null || cartItem.getProduct().getId() == null || cartItem.getProduct().getId().isEmpty()) {
                     throw new IllegalStateException("Invalid cart item: Product is missing or invalid");
                 }
             }
@@ -262,24 +276,6 @@ public class PaymentController {
             response.put("success", false);
             response.put("message", "Error verifying payment: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
-
-    // Helper method to parse IDs from request
-    private Integer parseId(Object idObj, String fieldName) {
-        if (idObj == null) {
-            throw new IllegalArgumentException(fieldName + " is required");
-        }
-        try {
-            if (idObj instanceof Integer) {
-                return (Integer) idObj;
-            } else if (idObj instanceof String) {
-                return Integer.parseInt((String) idObj);
-            } else {
-                throw new IllegalArgumentException("Invalid " + fieldName + " format");
-            }
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid " + fieldName + " format: " + e.getMessage());
         }
     }
 }

@@ -17,7 +17,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/buyer/{buyerId}")
-    public ResponseEntity<List<OrderDTO>> getBuyerOrders(@PathVariable int buyerId) {
+    public ResponseEntity<List<OrderDTO>> getBuyerOrders(@PathVariable String buyerId) {
         try {
             List<OrderDTO> orders = orderService.getOrdersByBuyerId(buyerId);
             return ResponseEntity.ok(orders);
@@ -27,7 +27,7 @@ public class OrderController {
     }
 
     @GetMapping("/seller/{sellerId}")
-    public ResponseEntity<List<OrderDTO>> getSellerOrders(@PathVariable int sellerId) {
+    public ResponseEntity<List<OrderDTO>> getSellerOrders(@PathVariable String sellerId) {
         try {
             List<OrderDTO> orders = orderService.getOrdersBySellerId(sellerId);
             return ResponseEntity.ok(orders);

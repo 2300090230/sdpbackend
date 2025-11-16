@@ -62,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public String deleteSeller(int id) {
+    public String deleteSeller(String id) {
         Optional<Seller> seller = sellerRepository.findById(id);
         if (seller.isPresent()) {
             sellerRepository.deleteById(id);
@@ -73,7 +73,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public String deleteBuyer(int id) {
+    public String deleteBuyer(String id) {
         Optional<Buyer> buyer = buyerRepository.findById(id);
         if (buyer.isPresent()) {
             buyerRepository.deleteById(id);
@@ -89,7 +89,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public String approveSeller(int sellerId) {
+    public String approveSeller(String sellerId) {
         Optional<Seller> optionalSeller = sellerRepository.findById(sellerId);
         if (optionalSeller.isPresent()) {
             Seller seller = optionalSeller.get();
@@ -250,4 +250,14 @@ public class AdminServiceImpl implements AdminService {
 
         return salesData;
     }
+
+	@Override
+	public Admin register(Admin admin) {
+		// Check if username already exists
+		Optional<Admin> existingAdmin = adminRepository.findByUsername(admin.getUsername());
+		if (existingAdmin.isPresent()) {
+			throw new IllegalArgumentException("Username already exists!");
+		}
+		return adminRepository.save(admin);
+	}
 }

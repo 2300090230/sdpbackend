@@ -56,7 +56,7 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public String approveSeller(int sellerId) {
+	public String approveSeller(String sellerId) {
 		Optional<Seller> optionalSeller = sellerRepository.findById(sellerId);
 		if (optionalSeller.isPresent()) {
 			Seller seller = optionalSeller.get();
@@ -69,7 +69,7 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public String rejectSeller(int id) {
+	public String rejectSeller(String id) {
 		Optional<Seller> optionalSeller = sellerRepository.findById(id);
 		if (optionalSeller.isPresent()) {
 			Seller seller = optionalSeller.get();
@@ -82,7 +82,7 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public String deleteSeller(int id) {
+	public String deleteSeller(String id) {
 		Optional<Seller> optionalSeller = sellerRepository.findById(id);
 		if (optionalSeller.isPresent()) {
 			sellerRepository.deleteById(id);
@@ -93,8 +93,7 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public Seller getSellerById(int sid) {
-
+	public Seller getSellerById(String sid) {
 		return sellerRepository.findById(sid).get();
 	}
 
@@ -167,7 +166,8 @@ public class SellerServiceImpl implements SellerService {
 		return "Password updated successfully!";
 	}
 
-	public long getTotalProductsBySeller(int sellerId) {
+	@Override
+	public long getTotalProductsBySeller(String sellerId) {
 		Seller seller = sellerRepository.findById(sellerId).orElse(null);
 		if (seller == null) {
 			throw new IllegalArgumentException("Seller not found");
@@ -176,19 +176,19 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public long getTotalOrdersBySeller(int sellerId) {
+	public long getTotalOrdersBySeller(String sellerId) {
 		return orderRepository.findBySellerId(sellerId).size();
 	}
 
 	@Override
-	public double getTotalRevenueBySeller(int sellerId) {
+	public double getTotalRevenueBySeller(String sellerId) {
 		return orderRepository.findBySellerId(sellerId).stream()
 				.filter(order -> "Completed".equalsIgnoreCase(order.getStatus()))
 				.mapToDouble(order -> order.getAmount()).sum();
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalesDataBySeller(int sellerId, String period) {
+	public List<Map<String, Object>> getSalesDataBySeller(String sellerId, String period) {
 		List<Map<String, Object>> salesData = new ArrayList<>();
 		List<Order> orders = orderRepository.findBySellerId(sellerId);
 

@@ -5,7 +5,7 @@ import com.klef.fsd.model.Address;
 import java.time.LocalDateTime;
 
 public class OrderDTO {
-    private int id;
+    private String id;
     private int quantity;
     private double amount;
     private String status;
@@ -16,11 +16,11 @@ public class OrderDTO {
     private Address address;
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

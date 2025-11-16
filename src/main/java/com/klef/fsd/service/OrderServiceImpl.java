@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByBuyerId(int buyerId) {
+    public List<OrderDTO> getOrdersByBuyerId(String buyerId) {
         Optional<Buyer> buyerOpt = buyerRepository.findById(buyerId);
         if (!buyerOpt.isPresent()) {
             throw new IllegalArgumentException("Buyer does not exist");
@@ -84,6 +84,7 @@ public class OrderServiceImpl implements OrderService {
             productDTO.setDescription(order.getProduct().getDescription());
             productDTO.setCost(order.getProduct().getCost());
             productDTO.setSeller_id(order.getSeller().getId());
+            productDTO.setImageUrl(order.getProduct().getImageUrl());
 
             orderDTO.setProduct(productDTO);
             orderDTOs.add(orderDTO);
@@ -93,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersBySellerId(int sellerId) {
+    public List<OrderDTO> getOrdersBySellerId(String sellerId) {
         List<Order> orders = orderRepository.findBySellerId(sellerId);
         List<OrderDTO> orderDTOs = new ArrayList<>();
 
@@ -115,6 +116,7 @@ public class OrderServiceImpl implements OrderService {
             productDTO.setDescription(order.getProduct().getDescription());
             productDTO.setCost(order.getProduct().getCost());
             productDTO.setSeller_id(order.getSeller().getId());
+            productDTO.setImageUrl(order.getProduct().getImageUrl());
 
             orderDTO.setProduct(productDTO);
             orderDTOs.add(orderDTO);

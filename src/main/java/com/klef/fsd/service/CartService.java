@@ -9,14 +9,14 @@ public interface CartService {
 
     Cart addToCart(Cart cart);
 
-    List<CartDTO> getCartItemsByBuyerId(int buyerId);
+    List<CartDTO> getCartItemsByBuyerId(String buyerId);
 
-    void removeCartItem(int cartId);
+    void removeCartItem(String cartId);
 
-    void clearCartByBuyerId(int buyerId);
+    void clearCartByBuyerId(String buyerId);
 
-    Cart updateCartQuantity(int buyerId, int productId, int quantity);
+    Cart updateCartQuantity(String buyerId, String productId, int quantity);
 
-    int getCartCountByBuyerId(int buyerId);
+    long getCartCountByBuyerId(String buyerId);
     
 }

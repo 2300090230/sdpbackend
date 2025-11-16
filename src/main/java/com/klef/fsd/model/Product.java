@@ -1,42 +1,27 @@
 package com.klef.fsd.model;
 
-import java.sql.Blob;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-@Entity
-@Table(name = "product_table")
+@Document(collection = "products")
 public class Product {
 	@Id
-	  @GeneratedValue(strategy = GenerationType.IDENTITY)
-	  @Column(name="product_id")
-	  private int id;
-	  @Column(name="product_category",nullable = false,length = 100)
-	  private String category;
-	  @Column(name="product_name",nullable = false,length = 100)
-	  private String name;
-	  @Column(name="product_desc",nullable = false,length = 500)
-	  private String description;
-	  @Column(name="product_cost",nullable = false)
-	  private double cost;
-	  @Column(name="product_image",nullable = false)
-	  private Blob image; // blob - binary large object
+	private String id;
+	private String category;
+	private String name;
+	private String description;
+	private double cost;
+	private String imageUrl; // Cloudinary URL instead of Blob
 	  
-	  @ManyToOne
-	  @JoinColumn(name = "seller_id") // Foreign key column
-	  private Seller seller;
+	@DBRef
+	private Seller seller;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -72,12 +57,12 @@ public class Product {
 		this.cost = cost;
 	}
 
-	public Blob getImage() {
-		return image;
+	public String getImageUrl() {
+		return imageUrl;
 	}
 
-	public void setImage(Blob image) {
-		this.image = image;
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public Seller getSeller() {

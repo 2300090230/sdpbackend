@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface OrderService {
     Order createOrder(Order order);
-    List<OrderDTO> getOrdersByBuyerId(int buyerId);
-    List<OrderDTO> getOrdersBySellerId(int sellerId);
+    List<OrderDTO> getOrdersByBuyerId(String buyerId);
+    List<OrderDTO> getOrdersBySellerId(String sellerId);
 }

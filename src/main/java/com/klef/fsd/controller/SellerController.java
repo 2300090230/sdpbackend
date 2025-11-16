@@ -63,13 +63,13 @@ public class SellerController {
 //  }
 
   @PutMapping("/reject/{id}")
-  public ResponseEntity<String> rejectSeller(@PathVariable("id") int id) {
+  public ResponseEntity<String> rejectSeller(@PathVariable("id") String id) {
     String result = sellerService.rejectSeller(id);
     return ResponseEntity.ok(result);
   }
 
   @DeleteMapping("/delete")
-  public ResponseEntity<String> deleteSeller(@RequestParam("id") int id) {
+  public ResponseEntity<String> deleteSeller(@RequestParam("id") String id) {
     String result = sellerService.deleteSeller(id);
     return ResponseEntity.ok(result);
   }
@@ -93,37 +93,37 @@ public class SellerController {
 
   }
 	@GetMapping("/{sellerId}/products/count")
-	public ResponseEntity<Map<?, ?>> getTotalProducts(@PathVariable("sellerId") int sellerId) {
+	public ResponseEntity<Map<?, ?>> getTotalProducts(@PathVariable("sellerId") String sellerId) {
 		try {
 			long count = sellerService.getTotalProductsBySeller(sellerId);
-			return ResponseEntity.ok(Map.of("sellerId", (long) sellerId, "totalProducts", count));
+			return ResponseEntity.ok(Map.of("sellerId", sellerId, "totalProducts", count));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch product count: " + e.getMessage()));
 		}
 	}
 
 	@GetMapping("/{sellerId}/orders/count")
-	public ResponseEntity<Map<?, ?>> getTotalOrders(@PathVariable("sellerId") int sellerId) {
+	public ResponseEntity<Map<?, ?>> getTotalOrders(@PathVariable("sellerId") String sellerId) {
 		try {
 			long count = sellerService.getTotalOrdersBySeller(sellerId);
-			return ResponseEntity.ok(Map.of("sellerId", (long) sellerId, "totalOrders", count));
+			return ResponseEntity.ok(Map.of("sellerId", sellerId, "totalOrders", count));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch order count: " + e.getMessage()));
 		}
 	}
 
 	@GetMapping("/{sellerId}/revenue")
-	public ResponseEntity<Map<?, ?>> getTotalRevenue(@PathVariable("sellerId") int sellerId) {
+	public ResponseEntity<Map<?, ?>> getTotalRevenue(@PathVariable("sellerId") String sellerId) {
 		try {
 			double revenue = sellerService.getTotalRevenueBySeller(sellerId);
-			return ResponseEntity.ok(Map.of("sellerId", (long) sellerId, "totalRevenue", revenue));
+			return ResponseEntity.ok(Map.of("sellerId", sellerId, "totalRevenue", revenue));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch revenue: " + e.getMessage()));
 		}
 	}
 
 	@GetMapping("/{sellerId}/sales-data")
-	public ResponseEntity<List<Map<String, Object>>> getSalesData(@PathVariable("sellerId") int sellerId,
+	public ResponseEntity<List<Map<String, Object>>> getSalesData(@PathVariable("sellerId") String sellerId,
 			@RequestParam(value = "period", defaultValue = "daily") String period) {
 		try {
 			List<Map<String, Object>> salesData = sellerService.getSalesDataBySeller(sellerId, period);

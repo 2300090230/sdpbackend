@@ -1,57 +1,42 @@
 package com.klef.fsd.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "order_table")
+@Document(collection = "orders")
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private int id;
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "buyer_id", nullable = false)
+    @DBRef
     private Buyer buyer;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
+    @DBRef
     private Seller seller;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @DBRef
     private Product product;
 
-    @Column(name = "quantity", nullable = false)
     private int quantity;
-
-    @Column(name = "amount", nullable = false)
     private double amount;
-
-    @Column(name = "status", nullable = false)
     private String status; // e.g., "PAID", "PENDING"
-
-    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @DBRef
     private Address address;
 
-    @Column(name = "razorpay_order_id")
     private String razorpayOrderId;
-
-    @Column(name = "razorpay_payment_id")
     private String razorpayPaymentId;
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

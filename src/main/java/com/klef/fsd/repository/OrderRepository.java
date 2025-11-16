@@ -1,38 +1,42 @@
 package com.klef.fsd.repository;
+
 import com.klef.fsd.model.Order;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.Aggregation;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findByBuyerId(int buyerId);
-    List<Order> findBySellerId(int sellerId);
+public interface OrderRepository extends MongoRepository<Order, String> {
+    List<Order> findByBuyerId(String buyerId);
+    List<Order> findBySellerId(String sellerId);
     Optional<Order> findByRazorpayPaymentId(String razorpayPaymentId);
     
-    // Using JPQL functions that are database-agnostic
-    @Query("SELECT FUNCTION('date_format', o.orderDate, '%Y-%m-%d') as date, COUNT(o) as orderCount, SUM(o.amount) as revenue " +
-           "FROM Order o WHERE o.seller.id = :sellerId AND o.orderDate >= :startDate " +
-           "GROUP BY FUNCTION('date_format', o.orderDate, '%Y-%m-%d')")
-    List<Object[]> getDailySalesData(@Param("sellerId") int sellerId, @Param("startDate") LocalDateTime startDate);
+    // MongoDB queries for sales data
+    @Query("{ 'seller.$id': ?0, 'orderDate': { $gte: ?1 } }")
+    List<Order> findBySellerIdAndOrderDateAfter(String sellerId, LocalDateTime startDate);
     
-    @Query("SELECT FUNCTION('date_format', o.orderDate, '%Y-%m') as month, COUNT(o) as orderCount, SUM(o.amount) as revenue " +
-           "FROM Order o WHERE o.seller.id = :sellerId AND o.orderDate >= :startDate " +
-           "GROUP BY FUNCTION('date_format', o.orderDate, '%Y-%m')")
-    List<Object[]> getMonthlySalesData(@Param("sellerId") int sellerId, @Param("startDate") LocalDateTime startDate);
+    @Query("{ 'orderDate': { $gte: ?0 } }")
+    List<Order> findByOrderDateAfter(LocalDateTime startDate);
     
-    // Admin queries for platform-wide sales data - modified to be more database-agnostic
-    @Query("SELECT FUNCTION('date_format', o.orderDate, '%Y-%m-%d') as date, COUNT(o) as orderCount, SUM(o.amount) as revenue " +
-           "FROM Order o WHERE o.orderDate >= :startDate " +
-           "GROUP BY FUNCTION('date_format', o.orderDate, '%Y-%m-%d')")
-    List<Object[]> getAdminDailySalesData(@Param("startDate") LocalDateTime startDate);
+    // Aggregation for admin daily sales data
+    @Aggregation(pipeline = {
+        "{ $match: { orderDate: { $gte: ?0 } } }",
+        "{ $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$orderDate' } }, orderCount: { $sum: 1 }, revenue: { $sum: '$amount' } } }",
+        "{ $project: { _id: 0, date: '$_id', orderCount: 1, revenue: 1 } }",
+        "{ $sort: { date: 1 } }"
+    })
+    List<Object[]> getAdminDailySalesData(LocalDateTime startDate);
     
-    @Query("SELECT FUNCTION('date_format', o.orderDate, '%Y-%m') as month, COUNT(o) as orderCount, SUM(o.amount) as revenue " +
-           "FROM Order o WHERE o.orderDate >= :startDate " +
-           "GROUP BY FUNCTION('date_format', o.orderDate, '%Y-%m')")
-    List<Object[]> getAdminMonthlySalesData(@Param("startDate") LocalDateTime startDate);
+    // Aggregation for admin monthly sales data
+    @Aggregation(pipeline = {
+        "{ $match: { orderDate: { $gte: ?0 } } }",
+        "{ $group: { _id: { $dateToString: { format: '%Y-%m', date: '$orderDate' } }, orderCount: { $sum: 1 }, revenue: { $sum: '$amount' } } }",
+        "{ $project: { _id: 0, month: '$_id', orderCount: 1, revenue: 1 } }",
+        "{ $sort: { month: 1 } }"
+    })
+    List<Object[]> getAdminMonthlySalesData(LocalDateTime startDate);
 }

@@ -1,18 +1,26 @@
 package com.klef.fsd.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "admin_table")
+@Document(collection = "admins")
 public class Admin {
 	@Id
-	@Column(length=50)
+	private String id;
+	
+	@Indexed(unique = true)
 	private String username;
-	@Column(length=50,nullable = false)
+	
 	private String password;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getUsername() {
 		return username;

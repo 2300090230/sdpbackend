@@ -10,7 +10,10 @@ import com.klef.fsd.model.Seller;
 
 public interface AdminService 
 {
+
   public Admin checkadminlogin(String username,String password);
+  
+  public Admin register(Admin admin);
   
   public String addSeller(Seller seller);
   
@@ -18,12 +21,12 @@ public interface AdminService
   
   public List<Buyer> viewBuyers();
   
-  public String deleteSeller(int id);
+  public String deleteSeller(String id);
   
-  public String deleteBuyer(int id);
+  public String deleteBuyer(String id);
   
   public List<Seller> viewPendingSellers();
-  public String approveSeller(int sellerId);
+  public String approveSeller(String sellerId);
 
   long getTotalSellers();
   long getTotalBuyers();

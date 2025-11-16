@@ -21,7 +21,7 @@ import com.klef.fsd.repository.BuyerRepository;
 	    private BuyerRepository buyerRepository;
 
 	    @Override
-	    public Address addAddress(Address address, Integer buyerId) {
+	    public Address addAddress(Address address, String buyerId) {
 	        Buyer buyer = buyerRepository.findById(buyerId)
 	                .orElseThrow(() -> new RuntimeException("Buyer not found with id: " + buyerId));
 	        address.setBuyer(buyer);
@@ -29,11 +29,12 @@ import com.klef.fsd.repository.BuyerRepository;
     }
 
 	    @Override
-	    public List<Address> getAddressesByBuyer(Integer buyerId) {
+	    public List<Address> getAddressesByBuyer(String buyerId) {
 	        return addressRepository.findByBuyerId(buyerId);
 	    }
 	
-	    public void deleteAddress(int addressId) {
+	    @Override
+	    public void deleteAddress(String addressId) {
 	        if (addressRepository.existsById(addressId)) {
 	            addressRepository.deleteById(addressId);
 	        } else {

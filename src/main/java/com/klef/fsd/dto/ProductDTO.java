@@ -1,19 +1,20 @@
 package com.klef.fsd.dto;
 
 public class ProductDTO {
-    private int id;
+    private String id;
     private String name;
     private String category;
     private String description;
     private double cost;
-    private int seller_id;
+    private String seller_id;
+    private String imageUrl;
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -49,11 +50,19 @@ public class ProductDTO {
         this.cost = cost;
     }
 
-    public int getSeller_id() {
+    public String getSeller_id() {
         return seller_id;
     }
 
-    public void setSeller_id(int seller_id) {
+    public void setSeller_id(String seller_id) {
         this.seller_id = seller_id;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

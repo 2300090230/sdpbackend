@@ -1,20 +1,14 @@
 package com.klef.fsd.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-@Entity
-@Table(name = "address_table")
+@Document(collection = "addresses")
 public class Address {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private String id;
 
 	private String houseNumber;
 	private String street;
@@ -22,15 +16,14 @@ public class Address {
 	private String state;
 	private String pincode;
 
-	@ManyToOne
-	@JoinColumn(name = "buyer_id")
+	@DBRef
 	private Buyer buyer;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int  id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

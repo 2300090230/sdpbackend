@@ -1,11 +1,9 @@
 package com.klef.fsd.controller;
 
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,20 +34,17 @@ public class ProductController {
 	@PostMapping("/addproduct")
 	public ResponseEntity<String> addProduct(@RequestParam String category, @RequestParam String name,
 			@RequestParam String description, @RequestParam double cost,
-			@RequestParam("productimage") MultipartFile file, @RequestParam int sid) {
+			@RequestParam("productimage") MultipartFile file, @RequestParam String sid) {
 		try {
 			Seller seller = sellerservice.getSellerById(sid);
-			byte[] bytes = file.getBytes();
-			Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
 			Product p = new Product();
 			p.setCategory(category);
 			p.setCost(cost);
 			p.setDescription(description);
-			p.setImage(blob);
 			p.setSeller(seller);
 			p.setName(name);
 
-			String output = productService.addProduct(p);
+			String output = productService.addProduct(p, file);
 			return ResponseEntity.ok(output);
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Error: " + e.getMessage());
@@ -58,10 +53,10 @@ public class ProductController {
 	}
 
 	@PutMapping("/updateproduct")
-	public ResponseEntity<String> updateProduct(@RequestParam int id, @RequestParam String category, 
+	public ResponseEntity<String> updateProduct(@RequestParam String id, @RequestParam String category, 
 	        @RequestParam String name, @RequestParam String description, @RequestParam double cost,
 	        @RequestParam(value = "productimage", required = false) MultipartFile file, 
-	        @RequestParam int sid) {
+	        @RequestParam String sid) {
 	    try {
 	        Seller seller = sellerservice.getSellerById(sid);
 	        Product p = productService.getProductById(id); // Get existing product
@@ -74,15 +69,8 @@ public class ProductController {
 	        p.setDescription(description);
 	        p.setName(name);
 	        p.setSeller(seller);
-	        
-	        // Only update image if a new one is provided
-	        if (file != null && !file.isEmpty()) {
-	            byte[] bytes = file.getBytes();
-	            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
-	            p.setImage(blob);
-	        }
 
-	        String output = productService.updateProduct(p);
+	        String output = productService.updateProduct(p, file);
 	        return ResponseEntity.ok(output);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(500).body("Error: " + e.getMessage());
@@ -101,24 +89,21 @@ public class ProductController {
 			dto.setName(p.getName());
 			dto.setDescription(p.getDescription());
 			dto.setCost(p.getCost());
-			dto.setSeller_id(p.getSeller().getId());
+			// Provide fallback for imageUrl if null or empty
+			String imageUrl = p.getImageUrl();
+			if (imageUrl == null || imageUrl.trim().isEmpty()) {
+				imageUrl = "https://placehold.co/300x200?text=No+Image";
+			}
+			dto.setImageUrl(imageUrl);
+			dto.setSeller_id(p.getSeller() != null ? p.getSeller().getId() : null);
 			productDTOList.add(dto);
 		}
 
 		return ResponseEntity.ok(productDTOList);
 	}
 
-	@GetMapping("displayproductimage")
-	public ResponseEntity<byte[]> displayproductimage(@RequestParam int id) throws Exception {
-		Product product = productService.viewProductById(id);
-		byte[] imageBytes = null;
-		imageBytes = product.getImage().getBytes(1, (int) product.getImage().length());
-
-		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
-
-	}
-	@GetMapping("/getproduct/{id}")
-	public ResponseEntity<ProductDTO> getProduct(@PathVariable int id) {
+	@GetMapping({"/{id}", "/getproduct/{id}"})
+	public ResponseEntity<ProductDTO> getProduct(@PathVariable String id) {
 	    Product product = productService.getProductById(id);
 	    if (product == null) {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with ID " + id);
@@ -131,16 +116,19 @@ public class ProductController {
 	    dto.setName(product.getName());
 	    dto.setDescription(product.getDescription());
 	    dto.setCost(product.getCost());
-	    dto.setSeller_id(product.getSeller().getId());
+	    // Provide fallback for imageUrl if null or empty
+	    String imageUrl = product.getImageUrl();
+	    if (imageUrl == null || imageUrl.trim().isEmpty()) {
+	        imageUrl = "https://placehold.co/600x600?text=No+Image";
+	    }
+	    dto.setImageUrl(imageUrl);
+	    dto.setSeller_id(product.getSeller() != null ? product.getSeller().getId() : null);
 
 	    return ResponseEntity.ok(dto);
 	}
 
-
-
-
 	@GetMapping("viewproductsbyseller/{sid}")
-	public ResponseEntity<List<ProductDTO>> viewProductBySeller(@PathVariable int sid) {
+	public ResponseEntity<List<ProductDTO>> viewProductBySeller(@PathVariable String sid) {
 		List<Product> products = productService.viewProductsBySeller(sid);
 		List<ProductDTO> productDTOs = new ArrayList<>();
 
@@ -151,15 +139,21 @@ public class ProductController {
 			dto.setName(p.getName());
 			dto.setDescription(p.getDescription());
 			dto.setCost(p.getCost());
-			dto.setSeller_id(p.getSeller().getId());
+			// Provide fallback for imageUrl if null or empty
+			String imageUrl = p.getImageUrl();
+			if (imageUrl == null || imageUrl.trim().isEmpty()) {
+				imageUrl = "https://placehold.co/300x200?text=No+Image";
+			}
+			dto.setImageUrl(imageUrl);
+			dto.setSeller_id(p.getSeller() != null ? p.getSeller().getId() : null);
 			productDTOs.add(dto);
 		}
 
-		return ResponseEntity.ok(productDTOs); // ✅ No Blob, no error
+		return ResponseEntity.ok(productDTOs);
 	}
 
 	@DeleteMapping("/deleteproduct/{id}")
-	public ResponseEntity<String> deleteProduct(@PathVariable int id) {
+	public ResponseEntity<String> deleteProduct(@PathVariable String id) {
 	    try {
 	        String result = productService.deleteProduct(id);
 	        return ResponseEntity.ok(result);

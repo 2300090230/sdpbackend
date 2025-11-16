@@ -1,56 +1,34 @@
 package com.klef.fsd.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-//name,email,username,password,mobileno,nationalidno,location
-@Entity
-@Table(name = "seller_table")
+@Document(collection = "sellers")
 public class Seller {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "seller_id")
-	private int id;
+	private String id;
 
-	@Column(name = "seller_name", length = 50, nullable = false)
 	private String name;
-
-	@Column(name = "seller_email", length = 70, nullable = false, unique = true)
+	@Indexed(unique = true)
 	private String email;
-
-	@Column(name = "seller_username", length = 50, nullable = false, unique = true)
+	@Indexed(unique = true)
 	private String username;
-
-	@Column(name = "seller_pwd", length = 20, nullable = false)
 	private String password;
-
-	@Column(name = "seller_mobileno", length = 20, nullable = false)
+	@Indexed(unique = true)
 	private String mobileno;
-
-	@Column(name = "seller_nationalidno", length = 20, nullable = false, unique = true)
+	@Indexed(unique = true)
 	private String nationalidno;
-
-	@Column(name = "seller_location", length = 20, nullable = false)
 	private String location;
-
-	@Column(name = "seller_status", length = 20)
 	private String status = "Pending";
-	
-	@Column(name = "reset_token", length = 255, nullable = true)
 	private String resetToken = null;
 
-
-
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

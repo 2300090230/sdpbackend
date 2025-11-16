@@ -86,7 +86,7 @@ public class AdminController {
 //	    }
 //	}
 	@PostMapping("/approveseller/{id}")
-	public ResponseEntity<String> approveSeller(@PathVariable("id") int sellerId) {
+	public ResponseEntity<String> approveSeller(@PathVariable("id") String sellerId) {
 	    try {
 	        String result = service.approveSeller(sellerId);
 	        return ResponseEntity.ok(result);
@@ -157,6 +157,18 @@ public class AdminController {
 		} catch (Exception e) {
 			return ResponseEntity.status(500)
 					.body(List.of(Map.of("error", "Failed to fetch sales data: " + e.getMessage())));
+		}
+	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<?> registerAdmin(@RequestBody Admin admin) {
+		try {
+			Admin registeredAdmin = service.register(admin);
+			return ResponseEntity.ok(registeredAdmin);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(400).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Registration failed: " + e.getMessage());
 		}
 	}
 }

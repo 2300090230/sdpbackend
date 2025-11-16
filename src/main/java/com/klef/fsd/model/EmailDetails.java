@@ -1,18 +1,16 @@
 package com.klef.fsd.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "email_details")
 public class EmailDetails {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private String id;
 	private String recipient;
-    private String subject;
-    private String msgBody;
+	private String subject;
+	private String msgBody;
+	
 	public String getRecipient() {
 		return recipient;
 	}
@@ -31,13 +29,11 @@ public class EmailDetails {
 	public void setMsgBody(String msgBody) {
 		this.msgBody = msgBody;
 	}
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-    
-    
 
 }
